@@ -95,12 +95,22 @@ def index():
         plt.close(fig3)
         # --- End Deep Learning Model Integration ---
         
+        # Save dataset as CSV
+        csv_file_path = f"static/{stock}_dataset.csv"
+        df.to_csv(csv_file_path)
+        
         return render_template('index.html', 
                                plot_path_ema_20_50=ema_chart_path, 
                                plot_path_ema_100_200=ema_chart_path_100_200, 
                                plot_path_prediction=prediction_chart_path,
-                               data_desc=df.describe().to_html(classes='table table-bordered'))
+                               data_desc=df.describe().to_html(classes='table table-bordered'),
+                               dataset_link=csv_file_path)
     return render_template('index.html')
+
+@app.route('/download/<filename>')
+def download_file(filename):
+    from flask import send_file
+    return send_file(f"static/{filename}", as_attachment=True)
 
 if __name__ == '__main__':
     app.run(debug=True)
